@@ -1,0 +1,92 @@
+#!/bin/python3
+
+#copies colors from xresources to various config files
+#
+#to use, copy the config file in question, add .in extension, and add the path
+#(without .in extension) to targets list below. The script will copy the .in file
+#to the real config path and replace all codes with their corresponding colors
+#
+#codes are in the following format:
+# %cl[!r]NAME%
+#for numbered colors, the name is just the number, for foreground and background
+#it is abreviated to fg and bg, and for anything else it is the same as whatever
+#you set it to in the xresources file.
+#
+#add the !r if you want the output to be comma separated rgb format, otherwise it
+#will be hexadecimal
+
+targets = [
+        "~/.config/alacritty/alacritty.yml",
+        "~/.config/dunst/dunstrc",
+        "~/desktop/doc/start.html",
+        "~/.config/BetterDiscord/themes/DiscordRecolor.theme.css"
+        ]
+
+
+import os, sys, subprocess, re
+
+class color():
+    def __init__(self, ip):
+        if (type(ip) == type(str())):
+            self.hex = ip
+            self.rgb = [int(ip.lstrip("#")[i:i+2],16) for i in range(0,6,2)]
+        elif (type(ip) == type(list())):
+            self.hex = "#"+"".join([str(hex(ip[0])).lstrip("0x") for i in range(0,6,2)])
+            self.rgb = ip
+    def interp(c1, c2, t, d):
+        return color([((c1.rgb[i]*(d-t)) + (c2.rgb[i]*(t)))//d for i in range(0,3)])
+    def to_str(self):
+        return ",".join([str(v) for v in self.rgb])
+
+
+xrdb=subprocess.run(['xrdb', '-query'], stdout=subprocess.PIPE).stdout.decode( 'utf-8' ).rstrip().split("\n")
+c = {}
+for line in xrdb:
+    #split line into key and value
+    kv=line.split(":\t")  
+    #replace color names used by xrdb with those used in the color codes. also make sure the color is a valid hex
+    if kv[0].find("*.") == 0 and re.match("^#[a-zA-Z0-9]{6}$", kv[1]) != None:
+        if kv[0].find("*.color") == 0:
+            c[kv[0][7:]] = color(kv[1])
+        elif kv[0].find("*.background") == 0:
+            c["bg"] = color(kv[1])
+        elif kv[0].find("*.foreground") == 0:
+            c["fg"] = color(kv[1])
+        else:
+            c[kv[0][2:]] = color(kv[1])
+
+for i in range(0,8):
+    #generate aditional shades of the foreground and background colors by interpolation
+    try:
+        c["g"+str(i)] = color.interp(c["bg"],c["light_bg"],i,16)
+        c["g"+str(i+8)] = color.interp(c["8"],c["fg"],i,8)
+    except KeyError:
+        pass
+
+
+for target in targets:
+    with open(os.path.expanduser(target) + ".in", "rt") as file:
+        f=file.read()
+        
+        
+        search=re.finditer("%cl[!a-zA-Z0-9_]*%", f) 
+        lnew=[]
+        #go through each color code, add the section proceeding it to the new file,
+        #then replace the code with the hex
+        sel=0
+        for match in search:
+            #add proceeding section of file to new file
+            lnew.append(f[sel:match.start()])
+            if (match.group()[3:5] != '!r'):
+                lnew.append(c[match.group()[3:-1]].hex)
+            else:
+                lnew.append(c[match.group()[5:-1]].to_str())
+            sel=match.end()
+        #add the last section of the file
+        lnew.append(f[sel:])
+
+        new = "".join(lnew)
+
+    #write to the new file
+    with open(os.path.expanduser(target), "w") as newfile:
+        newfile.write(new)

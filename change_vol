@@ -1,0 +1,16 @@
+#!/bin/sh
+
+amount=$1
+
+case "${2}" in
+	system )
+		pactl set-sink-volume 0 "${amount}%"
+		notify-send -h int:value:"$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )" 'system volume'
+		pkill -RTMIN+1 dwmblocks
+	;;
+	media )
+		mpc volume "${amount}"
+		notify-send -h int:value:"$( mpc volume | awk -F ': ' '{print $2}' | sed 's/%//' )" 'media volume'
+	;;
+esac
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+amount=$1
+n="$( echo $amount | sed 's/[+-]//' )"
+
+[ -z $( echo $amount | grep '-' ) ] || xbacklight -dec $n -time 100 -steps 3
+[ -z $( echo $amount | grep '+' ) ] || xbacklight -inc $n -time 100 -steps 3
+
+percent="$(expr $( expr $( cat /sys/class/backlight/amdgpu_bl0/brightness ) \* 100 ) / 255 )"
+
+notify-send -h int:value:$percent 'backlight'

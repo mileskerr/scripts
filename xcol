@@ -1,0 +1,24 @@
+#!/bin/python3
+import sys, subprocess, argparse
+
+
+p = argparse.ArgumentParser()
+p.add_argument('-bg', nargs='?')
+p.add_argument('-fg', nargs='?')
+args=p.parse_args()
+
+cols=[(args.fg,'38'), (args.bg,'48')]
+
+def hex_to_rgb(hex):
+    hex = hex.lstrip('#')
+    hlen = len(hex)
+    return tuple(int(hex[i:i + hlen // 3], 16) for i in range(0, hlen, hlen // 3))
+
+
+xrdb=subprocess.run(['xrdb', '-query'], stdout=subprocess.PIPE).stdout.decode( 'utf-8' ).rstrip().split("\n")
+for line in xrdb:
+    kv=line.split("\t")
+    for col in cols:
+        if (col[0] != None) and (kv[0].find(col[0]+":") != -1):
+            rgb=hex_to_rgb(kv[1]) 
+            print('\033['+col[1]+';2;'+str(rgb[0])+';'+str(rgb[1])+';'+str(rgb[2])+'m', end="")

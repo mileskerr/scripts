@@ -1,0 +1,32 @@
+#!/bin/sh
+
+low=10
+critical=2
+refresh=5
+timer=60
+cpath='/sys/class/power_supply/BAT0/capacity'
+spath='/sys/class/power_supply/BAT0/status'
+#cpath="$HOME/.scripts/capacity"
+
+state() {
+	sleep $refresh
+	percent=$( cat "$cpath" )
+	if (( "$percent" <= "$critical" )); then
+		if [[ "$1" == 'normal' ]] || [[ "$1" == 'low' ]]; then
+			notify-send "critical battery level, hibernating in $timer seconds"
+			sleep $timer
+			stat=$( cat "$spath")
+			if [[ "$stat" == 'Discharging' ]]; then
+				systemctl hibernate
+			fi
+		fi
+		state critical
+	elif (( "$percent" <= "$low" )); then
+		[[ "$1" == 'normal' ]] && notify-send 'low battery'
+		state low
+	else
+		state normal
+	fi
+}
+
+state

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# imagine using an electron app when you can just use
+# a script to open it in a browser window
+
+qutebrowser --target 'window' -B "$HOME/.config/qutediscord" -C "$HOME/.config/qutebrowser/config.py" -s 'tabs.show' 'never' -s 'content.user_stylesheets' "$HOME/.config/discordrecolor/discordrecolor.css" -s 'content.cookies.accept' 'no-3rdparty' -s 'content.javascript.enabled' true https://discord.com/app
+

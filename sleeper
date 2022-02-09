@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# dummy script to keep xorg alive so i can restart dwm without
+# restarting my x server
+
+while `/bin/true`; do
+sleep 1000
+done

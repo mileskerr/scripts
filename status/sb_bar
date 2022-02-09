@@ -1,0 +1,33 @@
+#!/bin/python3
+
+# generates a progress bar for the status bar
+# used by the other scripts to make volume, battery indicators etc.
+#
+# only works with dwm-statuscolors patch
+
+import argparse
+
+p = argparse.ArgumentParser()
+p.add_argument('percent')
+p.add_argument('label', nargs='?', default='')
+p.add_argument('-l', nargs='?', help='length', default=20)
+p.add_argument('-f', nargs='?', default=2)
+p.add_argument('-b', nargs='?', default=3)
+args=p.parse_args()
+
+percent = int(args.percent)
+label = str(args.label)
+length = int(args.l)
+cls = (int(args.f),int(args.b))
+
+#make sure percent is good
+percent = max(0,min(100,percent))
+
+div_ceil = lambda a, b : (a//b) + (a%b != 0)
+space_len = length-len(label)
+space_bar = (' ' * (space_len//2) + label + ' ' * div_ceil(space_len, 2))
+
+per = int(round((length*percent)/100))
+o = chr(cls[0])+space_bar[:per]+chr(cls[1])+space_bar[per:]+chr(1)
+print(o, end='')
+

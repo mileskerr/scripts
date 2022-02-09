@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# shows number of packages that need updating
+# checkupdates is included in the pacman-contrib package
+
+echo "﮾ $(checkupdates | wc -l)"

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# get average cpu freq
+
+echo "$(awk '/MHz/ { print $4 }' /proc/cpuinfo | awk '{for (i=1;i<=NF;++i) {sum+=$i; ++n}} END {printf int(sum/n)}' )Mhz"

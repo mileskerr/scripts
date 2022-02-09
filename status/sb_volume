@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# show current volume. it doesn't have to be able to get mpc volume but it can do that too ig
+
+case "${1}" in
+	system )
+		percent=$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )
+	;;
+	media )
+		percent=$( mpc volume | awk -F : '{print $2}' | sed 's/%//' )
+	;;
+	* )	
+		percent=$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )
+	;;
+
+esac
+
+sb_bar $percent "volume $percent%" -l 16

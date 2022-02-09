@@ -1,0 +1,11 @@
+#!/bin/python3
+import subprocess,re
+
+fr=subprocess.Popen(['free', '-b'], stdout=subprocess.PIPE)
+mem=subprocess.run(['awk', '/^Mem/ { print $3\"/\"$2 }'], stdin=fr.stdout,stdout=subprocess.PIPE).stdout.decode( 'utf-8' ).rstrip().split("/")
+
+used=int(mem[0])
+total=int(mem[1])
+percent = str((used*100)//total)
+label = str(round(used/1000000000, 1))+"/"+str(round(total/1000000000, 1))+"G"
+print(subprocess.run(['sb_bar', percent, label, "-l", "14"],stdout=subprocess.PIPE).stdout.decode( 'utf-8' ))

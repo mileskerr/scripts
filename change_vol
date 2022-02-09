@@ -5,11 +5,12 @@ amount=$1
 case "${2}" in
 	system )
 		pactl set-sink-volume 0 "${amount}%"
-		notify-send -h int:value:"$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )" 'system volume'
+		#don't send notif for system volume since it's alread in the status bar
+		#notify-send -h int:value:"$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )" 'system volume'
 		pkill -RTMIN+1 dwmblocks
 	;;
 	media )
-		mpc volume "${amount}"
+		playerctl volume "${amount}"
 		notify-send -h int:value:"$( mpc volume | awk -F ': ' '{print $2}' | sed 's/%//' )" 'media volume'
 	;;
 esac

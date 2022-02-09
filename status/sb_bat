@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# battery percentage. green bar if charging, red bar if low
+
+low=10
+stat=$( cat /sys/class/power_supply/BAT0/status )
+percent=$( cat /sys/class/power_supply/BAT0/capacity )
+#o="$([ $stat = Discharging ] && echo '%' || echo '⸱')"
+b='3'
+[ $stat = Discharging ] && f='2' || f='4'
+(( "$percent" <= "$low" )) && f='6'
+(( "$percent" <= "$low" )) && b='6'
+sb_bar "$percent" "$percent%" -l '5' -f "$f" -b "$b"

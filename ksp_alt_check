@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# the linux build of ksp uses right shift instead of alt. i don't like right shift
+# this script runs always
+
+app=$( xprop -id $( xdotool getactivewindow ) | awk '/WM_CLASS/{print $4}')
+ksp="\"KSP.x86_64\""
+if [[ "$app" == "$ksp" ]]; then
+	[[ "$( xmodmap -pk | grep ' 64  ' | awk '{print $3}')" == "(Shift_R)" ]] || \
+		notify-send 'Alt_L remapped for ksp'
+	xmodmap -e 'keycode 64=Shift_R'
+else
+	[[ "$( xmodmap -pk | grep ' 64  ' | awk '{print $3}')" == "(Shift_R)" ]] && \
+		notify-send 'Alt_L reset'
+	xmodmap -e 'keycode 64=Alt_L'
+fi
+
+sleep 10
+
+ksp_alt_check

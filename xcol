@@ -1,4 +1,10 @@
 #!/bin/python3
+#
+# this script generates escape codes for xresources colors
+# yes, my terminal already reads its colorscheme from
+# xresources, but this way i can use more than just the
+# first 8 colors.
+
 import sys, subprocess, argparse
 
 

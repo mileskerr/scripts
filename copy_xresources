@@ -20,6 +20,7 @@ targets = [
         "~/.config/dunst/dunstrc",
         "~/desktop/doc/start.html",
         "~/.config/discordrecolor/discordrecolor.css",
+        "~/.config/X11/debug",
         ]
 
 
@@ -31,10 +32,10 @@ class color():
             self.hex = ip
             self.rgb = [int(ip.lstrip("#")[i:i+2],16) for i in range(0,6,2)]
         elif (type(ip) == type(list())):
-            self.hex = "#"+"".join([str(hex(ip[0])).lstrip("0x") for i in range(0,6,2)])
+            self.hex = "#"+"".join([str(hex(ip[i])).lstrip("0x") for i in range(0,3)])
             self.rgb = ip
     def interp(c1, c2, t, d):
-        return color([((c1.rgb[i]*(d-t)) + (c2.rgb[i]*(t)))//d for i in range(0,3)])
+        return color([(((c1.rgb[i]*(d-t)) + (c2.rgb[i]*(t)))//d) for i in range(0,3)])
     def to_str(self):
         return ",".join([str(v) for v in self.rgb])
 
@@ -58,14 +59,12 @@ for line in xrdb:
 for i in range(0,8):
     #generate aditional shades of the foreground and background colors by interpolation
     try:
-        c["g"+str(i+8)] = color.interp(c["light_bg"],c["fg"],i,16)
+        c["g"+str(i+8)] = color.interp(c["8"],c["fg"],i,8)
         c["g"+str(i)] = color.interp(c["bg"],c["light_bg"],i,8)
     except KeyError:
         c["g"+str(i+8)] = color.interp(c["8"],c["fg"],i,8)
         c["g"+str(i)] = color.interp(c["bg"],c["warn_bg"],i,8)
-    #except KeyError:
-    #    c["g"+str(i)] = color.interp(c["bg"],c["0"],i,16)
-    #    pass
+
 
 
 for target in targets:

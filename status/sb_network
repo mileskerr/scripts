@@ -1,0 +1,17 @@
+#!/bin/bash
+
+IFS=$'\n'
+o="no internet "
+
+for l in $( nmcli connection show --active ); do
+	t="$( echo $l | awk '{print $3}' )"
+	name="$( echo $l | awk '{print $1}' )"
+	if [[ $t == 'wifi' ]]; then
+		o=" $name "	
+	elif [[ $t == 'ethernet' ]]; then
+		o="歷 $nam "	
+	fi
+done
+
+echo $o
+

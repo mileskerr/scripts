@@ -5,9 +5,10 @@
 
 app=$( xprop -id $( xdotool getactivewindow ) | awk '/WM_CLASS/{print $4}')
 ksp="\"KSP.x86_64\""
+
 if [[ "$app" == "$ksp" ]]; then
 	[[ "$( xmodmap -pk | grep ' 64  ' | awk '{print $3}')" == "(Shift_R)" ]] || \
-		notify-send 'Alt_L remapped for ksp'
+	notify-send 'Alt_L remapped for ksp'
 	xmodmap -e 'keycode 64=Shift_R'
 else
 	[[ "$( xmodmap -pk | grep ' 64  ' | awk '{print $3}')" == "(Shift_R)" ]] && \
@@ -17,4 +18,5 @@ fi
 
 sleep 10
 
-ksp_alt_check
+exec ksp_alt_check
+#repeat

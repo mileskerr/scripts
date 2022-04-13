@@ -18,9 +18,8 @@
 targets = [
         "~/.config/alacritty/alacritty.yml",
         "~/.config/dunst/dunstrc",
-        "~/desktop/doc/start.html",
-        "~/.config/discordrecolor/discordrecolor.css",
-        "~/.config/X11/debug",
+        "~/.config/qutebrowser/start.html",
+        #"~/.config/X11/debug",
         ]
 
 

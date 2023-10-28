@@ -5,6 +5,6 @@ n="$( echo $amount | sed 's/[+-]//' )"
 [ -z $( echo $amount | grep '-' ) ] || xbacklight -dec $n -time 100 -steps 3
 [ -z $( echo $amount | grep '+' ) ] || xbacklight -inc $n -time 100 -steps 3
 
-percent="$(expr $( expr $( cat /sys/class/backlight/amdgpu_bl0/brightness ) \* 100 ) / 255 )"
+percent="$(expr $( expr $( cat /sys/class/backlight/amdgpu_bl*/brightness ) \* 100 ) / 255 )"
 
-notify-send -h int:value:$percent 'backlight'
+notify-send -i $HOME/.icons/material-icons-sunny.svg -h int:value:$percent ' '

@@ -19,6 +19,8 @@ targets = [
         "~/.config/alacritty/alacritty.yml",
         "~/.config/dunst/dunstrc",
         "~/.config/qutebrowser/start.html",
+        "~/.config/polybar/config.ini",
+        "~/.config/eww/eww.scss",
         #"~/.config/X11/debug",
         ]
 

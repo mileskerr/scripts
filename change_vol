@@ -1,13 +1,15 @@
 #!/bin/sh
 
-amount=$1
+amount="$( echo $1 | tr -d '%' )"
+
 
 case "${2}" in
-	system )
-		pactl set-sink-volume 0 "${amount}%"
-		#don't send notif for system volume since it's alread in the status bar
-		#notify-send -h int:value:"$( pactl get-sink-volume 0 | awk '{ print $5 }' | sed 's/%//' )" 'system volume'
-		pkill -RTMIN+1 dwmblocks
+	system | "")
+        default_sink="$( pactl get-default-sink )"
+
+		pactl set-sink-volume $default_sink "${amount}%"
+		notify-send -h int:value:"$( pactl get-sink-volume $default_sink | awk '{ print $5 }' | sed 's/%//' )" 'system volume'
+		#pkill -RTMIN+1 dwmblocks
 	;;
 	media )
 		playerctl volume "${amount}"
